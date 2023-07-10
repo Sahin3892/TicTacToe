@@ -1,0 +1,58 @@
+body {
+  background-color: #323232;
+  font-family: "Open Sans", sans-serif;
+  margin: 0;
+  color: white;
+}
+
+#content {
+  margin-top: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+h1 {
+  text-align: center;
+}
+
+.board {
+  border-collapse: collapse;
+}
+
+.board td {
+  width: 100px;
+  height: 100px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  border: 1px solid white;
+  cursor: pointer;
+}
+
+.board td:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.board tr:first-child td,
+.board tr:last-child td {
+  border-top: none;
+  border-bottom: none;
+}
+
+.board tr td:first-child,
+.board tr td:last-child {
+  border-left: none;
+  border-right: none;
+}
+
+.board .winning-cell {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.winning-line {
+  position: absolute;
+  height: 5px;
+  background-color: white;
+  transform-origin: 0 0;
+}
