@@ -4,7 +4,6 @@ let currentPlayer = "circle";
 function init() {
   render();
 }
-
 function render() {
   const container = document.getElementById("content");
   const table = document.createElement("table");
@@ -12,56 +11,84 @@ function render() {
 
   let cellIndex = 0;
   for (let i = 0; i < 3; i++) {
-    const row = document.createElement("tr"); // Erstellt eine <tr>-Zeile
+    const row = document.createElement("tr");
     for (let j = 0; j < 3; j++) {
-      const cell = document.createElement("td"); // Erstellt ein <td>-Element
+      const cell = document.createElement("td");
       const fieldValue = fields[cellIndex];
       if (fieldValue === "circle") {
         const circleSVG = generateCircleSVG();
-        cell.innerHTML = circleSVG; // Fügt das generierte SVG für den Kreis in das <td>-Element ein
+        cell.innerHTML = circleSVG;
       } else if (fieldValue === "cross") {
         const crossSVG = generateCrossSVG();
-        cell.innerHTML = crossSVG; // Fügt das generierte SVG für das Kreuz in das <td>-Element ein
+        cell.innerHTML = crossSVG;
       }
       cell.setAttribute("onclick", `handleClick(${cellIndex})`);
-      row.appendChild(cell); // Fügt das <td>-Element zur aktuellen <tr>-Zeile hinzu
+      row.appendChild(cell);
       cellIndex++;
     }
-    table.appendChild(row); // Fügt die aktuelle <tr>-Zeile zum <table>-Element hinzu
+    table.appendChild(row);
   }
 
-  container.innerHTML = ""; // Leert den Container
-  container.appendChild(table); // Fügt das <table>-Element dem Container hinzu
+  container.innerHTML = "";
+  container.appendChild(table);
 
   const winningCombination = getWinningCombination();
   if (winningCombination) {
-    drawWinningLine(winningCombination); // Zeichnet die Gewinnlinie, falls das Spiel gewonnen wurde
+    drawWinningLine(winningCombination, table); // Übergeben Sie das Spielfeldtableau an die drawWinningLine-Funktion
   }
 }
 
 function handleClick(index) {
   const fieldValue = fields[index];
   if (fieldValue === null && !getWinningCombination()) {
-    fields[index] = currentPlayer; // Setzt den aktuellen Spieler in das entsprechende Feld
+    fields[index] = currentPlayer;
     const svg =
       currentPlayer === "circle" ? generateCircleSVG() : generateCrossSVG();
     const cell = document.getElementsByTagName("td")[index];
-    cell.innerHTML = svg; // Fügt das generierte SVG für den aktuellen Spieler in das <td>-Element ein
-    cell.removeAttribute("onclick"); // Entfernt das onclick-Attribut, um erneutes Klicken zu verhindern
-    currentPlayer = currentPlayer === "circle" ? "cross" : "circle"; // Wechselt den aktuellen Spieler
+    cell.innerHTML = svg;
+    cell.removeAttribute("onclick");
+    currentPlayer = currentPlayer === "circle" ? "cross" : "circle";
 
-    const winningCombination = getWinningCombination();
-    if (winningCombination) {
-      drawWinningLine(winningCombination); // Zeichnet die Gewinnlinie, falls das Spiel gewonnen wurde
+    if (currentPlayer === "cross" && !getWinningCombination()) {
+      playBotMove(); // Der Bot macht seinen Zug, wenn der Spieler "circle" seinen Zug gemacht hat
     }
   }
 }
 
+function playBotMove() {
+  if (currentPlayer === "cross" && !getWinningCombination()) {
+    const availableMoves = getAvailableMoves();
+    const randomIndex = Math.floor(Math.random() * availableMoves.length);
+    const randomMove = availableMoves[randomIndex];
+    fields[randomMove] = currentPlayer;
+    const cell = document.getElementsByTagName("td")[randomMove];
+    const svg = generateCrossSVG();
+    cell.innerHTML = svg;
+    cell.removeAttribute("onclick");
+    currentPlayer = currentPlayer === "circle" ? "cross" : "circle";
+  }
+}
+
+function getAvailableMoves() {
+  const availableMoves = [];
+  for (let i = 0; i < fields.length; i++) {
+    if (fields[i] === null) {
+      availableMoves.push(i);
+    }
+  }
+  return availableMoves;
+}
+
 function getWinningCombination() {
   const winningCombinations = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8], // horizontale Kombinationen
-    [0, 3, 6], [1, 4, 7], [2, 5, 8], // vertikale Kombinationen
-    [0, 4, 8], [2, 4, 6] // diagonale Kombinationen
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8], // horizontale Kombinationen
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8], // vertikale Kombinationen
+    [0, 4, 8],
+    [2, 4, 6], // diagonale Kombinationen
   ];
 
   for (const combination of winningCombinations) {
@@ -78,8 +105,7 @@ function getWinningCombination() {
   return null; // Gibt null zurück, wenn keine Gewinnkombination gefunden wurde
 }
 
-function drawWinningLine(winningCombination) {
-  const table = document.querySelector(".board");
+function drawWinningLine(winningCombination, table) {
   const cells = table.getElementsByTagName("td");
 
   const [a, b, c] = winningCombination;
@@ -89,6 +115,8 @@ function drawWinningLine(winningCombination) {
 
   const lineElement = document.createElement("div");
   lineElement.classList.add("winning-line");
+
+  table.parentNode.appendChild(lineElement); // Fügt die Gewinnlinie zum übergeordneten Container hinzu
 
   const rectA = cellA.getBoundingClientRect();
   const rectB = cellB.getBoundingClientRect();
@@ -108,9 +136,9 @@ function drawWinningLine(winningCombination) {
   lineElement.style.left = `${startX}px`;
   lineElement.style.width = `${length}px`;
   lineElement.style.transform = transform;
-
-  table.parentNode.appendChild(lineElement); // Fügt die Gewinnlinie zum übergeordneten Container hinzu
 }
+
+
 
 function generateCircleSVG() {
   const color = "#00B0EF";
@@ -144,4 +172,10 @@ function generateCrossSVG() {
     </svg>
   `;
   return svgCode;
+}
+
+function restartGame() {
+  fields = [null, null, null, null, null, null, null, null, null]; // Das Array "fields" wird zurückgesetzt
+  currentPlayer = "circle"; // Der aktuelle Spieler wird auf "circle" zurückgesetzt
+  render(); // Die Funktion "render" wird aufgerufen, um das Spielfeld neu zu rendern
 }

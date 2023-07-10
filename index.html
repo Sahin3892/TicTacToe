@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tic Tac Toe</title>
-    <link rel="stylesheet" href="src/style.css">
-</head>
-<body onload="render()">
+    <link rel="stylesheet" href="src/style.css" />
+  </head>
+  <body onload="render()">
     <h1>Tic Tac Toe</h1>
-    <div id="content"></div>
-
+    <div id="content" class="board-container"></div>
+    <div class="center">
+      <button onclick="restartGame()">Spiel neu Starten</button>
+    </div>
     <script src="src/script.js"></script>
-</body>
+  </body>
 </html>
