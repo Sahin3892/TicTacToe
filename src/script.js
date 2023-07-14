@@ -4,6 +4,7 @@ let currentPlayer = "circle";
 function init() {
   render();
 }
+
 function render() {
   const container = document.getElementById("content");
   const table = document.createElement("table");
@@ -34,7 +35,7 @@ function render() {
 
   const winningCombination = getWinningCombination();
   if (winningCombination) {
-    drawWinningLine(winningCombination, table); // Übergeben Sie das Spielfeldtableau an die drawWinningLine-Funktion
+    drawWinningLine(winningCombination);
   }
 }
 
@@ -49,8 +50,13 @@ function handleClick(index) {
     cell.removeAttribute("onclick");
     currentPlayer = currentPlayer === "circle" ? "cross" : "circle";
 
+    const winningCombination = getWinningCombination();
+    if (winningCombination) {
+      drawWinningLine(winningCombination);
+    }
+
     if (currentPlayer === "cross" && !getWinningCombination()) {
-      playBotMove(); // Der Bot macht seinen Zug, wenn der Spieler "circle" seinen Zug gemacht hat
+      playBotMove();
     }
   }
 }
@@ -66,6 +72,11 @@ function playBotMove() {
     cell.innerHTML = svg;
     cell.removeAttribute("onclick");
     currentPlayer = currentPlayer === "circle" ? "cross" : "circle";
+
+    const winningCombination = getWinningCombination();
+    if (winningCombination) {
+      drawWinningLine(winningCombination);
+    }
   }
 }
 
@@ -81,14 +92,9 @@ function getAvailableMoves() {
 
 function getWinningCombination() {
   const winningCombinations = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8], // horizontale Kombinationen
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8], // vertikale Kombinationen
-    [0, 4, 8],
-    [2, 4, 6], // diagonale Kombinationen
+    [0, 1, 2], [3, 4, 5], [6, 7, 8], // horizontale Kombinationen
+    [0, 3, 6], [1, 4, 7], [2, 5, 8], // vertikale Kombinationen
+    [0, 4, 8], [2, 4, 6] // diagonale Kombinationen
   ];
 
   for (const combination of winningCombinations) {
@@ -98,14 +104,15 @@ function getWinningCombination() {
       fields[a] === fields[b] &&
       fields[a] === fields[c]
     ) {
-      return combination; // Gibt die Gewinnkombination zurück, wenn eine gefunden wurde
+      return combination;
     }
   }
 
-  return null; // Gibt null zurück, wenn keine Gewinnkombination gefunden wurde
+  return null;
 }
 
-function drawWinningLine(winningCombination, table) {
+function drawWinningLine(winningCombination) {
+  const table = document.querySelector(".board");
   const cells = table.getElementsByTagName("td");
 
   const [a, b, c] = winningCombination;
@@ -115,8 +122,6 @@ function drawWinningLine(winningCombination, table) {
 
   const lineElement = document.createElement("div");
   lineElement.classList.add("winning-line");
-
-  table.parentNode.appendChild(lineElement); // Fügt die Gewinnlinie zum übergeordneten Container hinzu
 
   const rectA = cellA.getBoundingClientRect();
   const rectB = cellB.getBoundingClientRect();
@@ -136,9 +141,14 @@ function drawWinningLine(winningCombination, table) {
   lineElement.style.left = `${startX}px`;
   lineElement.style.width = `${length}px`;
   lineElement.style.transform = transform;
+
+  table.parentNode.appendChild(lineElement);
+
+  // Markiere die gewinnenden Zellen
+  cellA.classList.add("winning-cell");
+  cellB.classList.add("winning-cell");
+  cellC.classList.add("winning-cell");
 }
-
-
 
 function generateCircleSVG() {
   const color = "#00B0EF";
