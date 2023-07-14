@@ -1,3 +1,4 @@
+/* Body styles */
 body {
   background-color: #323232;
   font-family: "Open Sans", sans-serif;
@@ -5,6 +6,7 @@ body {
   color: white;
 }
 
+/* Game board container styles */
 #content {
   margin-top: 300px;
   display: flex;
@@ -12,10 +14,12 @@ body {
   align-items: center;
 }
 
+/* Heading styles */
 h1 {
   text-align: center;
 }
 
+/* Game board styles */
 .board {
   border-collapse: collapse;
 }
@@ -50,6 +54,7 @@ h1 {
   background-color: rgba(255, 255, 255, 0.3);
 }
 
+/* Winning line styles */
 .winning-line {
   position: absolute;
   height: 5px;
@@ -57,12 +62,14 @@ h1 {
   transform-origin: 0 0;
 }
 
+/* Center alignment styles */
 .center {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+/* Restart button styles */
 button {
   margin-top: 30px;
   padding: 10px 20px;
